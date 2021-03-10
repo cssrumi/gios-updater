@@ -7,13 +7,8 @@ class StationStore {
 
     get(stationName, fallbackFunction = undefined) {
         const station = this.#map.get(stationName);
-        if (!(station === undefined || station === null)) {
-            return station;
-        }
-
-        if (fallbackFunction === undefined) {
-            return null;
-        }
+        if (station) return station;
+        if (!fallbackFunction) return null;
 
         const fallbackStation = fallbackFunction()
         this.put(stationName, fallbackStation);

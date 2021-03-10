@@ -6,7 +6,7 @@ const Sensor = Object.freeze({
 
     parse: function (str) {
         const obj = this.values().filter(value => str === value)[0]
-        if (obj === undefined) throw new Error("Invalid Source type")
+        if (obj === undefined) throw new Error("Invalid Sensor type")
     },
 
     values: function () {

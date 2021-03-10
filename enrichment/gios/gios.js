@@ -9,13 +9,8 @@ const stationStore = new StationStore();
 
 export const getStation = async (stationName, auth = null) => {
     const storeValue = stationStore.get(stationName);
-    if (storeValue !== null && storeValue !== undefined) {
-        return storeValue;
-    }
-
-    if (auth === null) {
-        auth = await getAuth();
-    }
+    if (storeValue) return storeValue;
+    if (!auth) auth = await getAuth();
 
     return await getStationFromApi(stationName, auth)
 }
