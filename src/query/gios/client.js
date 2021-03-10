@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import pRetry from "p-retry";
-import Config from "../../config.js";
+import Config from "../../config/config.js";
 import AesUtil from "./aes-util.js";
 import {DateTime} from "luxon";
 

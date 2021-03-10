@@ -1,5 +1,5 @@
 import {Producer, KafkaClient} from 'kafka-node'
-import Config from "../config.js";
+import Config from "../config/config.js";
 
 
 const kafkaClient = new KafkaClient({

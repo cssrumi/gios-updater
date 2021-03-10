@@ -1,4 +1,4 @@
-import pgClient from "../database.js";
+import pgClient from "../config/database.js";
 
 const getSourceQuery = `select * from enriched_data
                         where timestamp <= now() - interval '73 HOURS'

@@ -17,6 +17,7 @@ const pgPassword = getOrThrow("PG_PASSWORD");
 const pgHost = getOrDefault("PG_HOST", "10.1.1.50")
 const pgPort = getOrDefault("PG_PORT", "5432")
 const database = getOrDefault("DATABASE", "warehouse")
+const zone = 'Europe/Warsaw'
 
 const Config = {
     GIOS_API: giosApi,
@@ -27,6 +28,7 @@ const Config = {
     PG_HOST: pgHost,
     PG_PORT: pgPort,
     DATABASE: database,
+    ZONE: zone,
 }
 
 export default Config;

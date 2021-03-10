@@ -1,4 +1,4 @@
-const enumValue = (name) => Object.freeze({toString: () => name});
+import enumValue from "../common/enum.js";
 
 const Source = Object.freeze({
     GIOS_API: enumValue("GIOS_API"),

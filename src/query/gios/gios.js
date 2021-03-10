@@ -1,8 +1,9 @@
 import {getAuth, getSensorDataPage, getStationsPage} from './client.js';
 import StationStore from './store.js';
-import Sensor from './sensor.js';
-import AirqStation from './station.js'
+import Sensor from '../../common/sensor.js';
+import GiosStation from './station.js'
 import {DateTime} from 'luxon';
+import Config from '../../config/config.js'
 
 
 const stationStore = new StationStore();
@@ -21,17 +22,19 @@ const getStationFromApi = async (stationName, auth) => {
     const station = entireData
         .filter(s => s.stationName.localeCompare(stationName, undefined, {sensitivity: 'base'}) === 0)
         .filter(s => s.sensorParamCode == Sensor.PM10 || s.sensorParamCode == Sensor.PM2_5)
-        .reduce((acc, curr) => acc.update(curr.sensorParamCode, curr.id), AirqStation.empty(stationName));
+        .reduce((acc, curr) => acc.update(curr.sensorParamCode, curr.id), GiosStation.empty(stationName));
 
     stationStore.put(stationName, station);
     return station;
 }
 
-export const getSensorData = async (stationId, date) => {
+export const getSensorData = async (sensorId, date) => {
     const auth = await getAuth();
-    const entireData = await flatMapPagesData(async (page) => getSensorDataPage(auth, stationId, date, page))
-    const dateValidator = (strDate) => DateTime.fromFormat(strDate, 'yyyy-MM-dd mm:ss').endOf('day').equals(date.endOf('day'));
-    return entireData.filter(data => dateValidator(data.dateTo));
+    const entireData = await flatMapPagesData(async (page) => getSensorDataPage(auth, sensorId, date, page))
+    const dateValidator = (strDate) => DateTime.fromFormat(strDate, 'yyyy-MM-dd HH:mm').setZone(Config.ZONE).ts === date.ts;
+    return entireData
+        .filter(data => dateValidator(data.dateTo))
+        .map(data => data.value)[0];
 }
 
 const flatMapPagesData = async (pageableAsyncCall) => {

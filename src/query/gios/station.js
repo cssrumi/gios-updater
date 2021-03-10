@@ -1,6 +1,6 @@
-import Sensor from "./sensor.js";
+import Sensor from "../../common/sensor.js";
 
-class AirqStation {
+class GiosStation {
     constructor(name, pm10SensorId, pm25SensorId) {
         this.name = name;
         this.pm10SensorId = pm10SensorId;
@@ -38,8 +38,8 @@ class AirqStation {
     }
 
     static empty(name) {
-        return new AirqStation(name, null, null);
+        return new GiosStation(name, null, null);
     }
 }
 
-export default AirqStation;
+export default GiosStation;
