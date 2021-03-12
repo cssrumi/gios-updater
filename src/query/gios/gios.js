@@ -1,7 +1,7 @@
 import {getAuth, getSensorDataPage, getStationsPage} from './client.js';
 import StationStore from './store.js';
 import Sensor from '../../common/sensor.js';
-import GiosStation from './station.js'
+import GiosStation from './gios-station.js'
 import {DateTime} from 'luxon';
 import Config from '../../config/config.js'
 

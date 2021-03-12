@@ -3,6 +3,7 @@ import Sensor from "../common/sensor.js";
 import {getSensorData, getStation} from "./gios/gios.js";
 import {getAuth} from "./gios/client.js";
 import {DateTime} from "luxon";
+import findAllGoodStations from './airq/good-stations.js'
 
 const airqMeasurementQuery = async (queryParam) => {
     throw new Error(`${Source.AIRQ_MEASUREMENT} query not implemented`);
@@ -29,7 +30,11 @@ export class QueryParam {
     }
 }
 
-export const asyncQuery = (source) => {
+export const sensorQueryFactory = (source) => {
     if (!Source.values().includes(source)) source = Source.parse(source)
     return queryMap.get(source)
+}
+
+export const findAllStations = async () => {
+    return await findAllGoodStations();
 }

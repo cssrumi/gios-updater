@@ -17,6 +17,8 @@ const pgPassword = getOrThrow("PG_PASSWORD");
 const pgHost = getOrDefault("PG_HOST", "10.1.1.50")
 const pgPort = getOrDefault("PG_PORT", "5432")
 const database = getOrDefault("DATABASE", "warehouse")
+const processWindow = getOrDefault("PROCESS_WINDOW", "74")
+const cron = getOrDefault("CRON", "0 0 * * * *")
 const zone = 'Europe/Warsaw'
 
 const Config = {
@@ -28,6 +30,8 @@ const Config = {
     PG_HOST: pgHost,
     PG_PORT: pgPort,
     DATABASE: database,
+    PROCESS_WINDOW: processWindow,
+    CRON: cron,
     ZONE: zone,
 }
 
