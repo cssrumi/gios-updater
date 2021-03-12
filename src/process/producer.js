@@ -1,20 +1,26 @@
-import {Producer, KafkaClient} from 'kafka-node'
 import Config from "../config/config.js";
+import {Kafka} from "kafkajs";
 
-
-const kafkaClient = new KafkaClient({
-    kafkaHost: Config.KAFKA_HOST
+const kafka = new Kafka({
+    clientId: 'gios-updater-app',
+    brokers: [Config.KAFKA_HOST]
 });
 
-const producer = new Producer(kafkaClient);
+const producer = kafka.producer();
+await producer.connect();
 
-const createKafkaMsg = (data) => [{
-    topic: Config.KAFKA_TOPIC,
-    messages: JSON.stringify(data)
-}]
-const send = (data) => data |> createKafkaMsg |> producer.send;
-const produce = (data) => {
-    producer.on("ready", () => send(data))
+const createMessage = (event) => {
+    return {value: JSON.stringify(event)}
+};
+
+const produce = async (event, topic) => {
+    await producer.send({
+        topic: topic,
+        messages: [createMessage(event)]
+    });
+    console.log(`Event send: ${JSON.stringify(event)}, on topic: ${topic}`);
 }
+
+process.on('SIGTERM', async () => producer.disconnect().then(() => console.log('Kafka producer disconnected.')));
 
 export default produce;

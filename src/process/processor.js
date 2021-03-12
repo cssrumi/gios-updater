@@ -34,9 +34,11 @@ class Processor {
             newPm10: pm10FromGiosApi,
             source: Source.GIOS_API.toString(),
         }
-        const event = new AirqEvent(EventType.UPDATE_GIOS_MEASUREMENT, payload);
+        const eventType = EventType.UPDATE_GIOS_MEASUREMENT;
+        const event = new AirqEvent(eventType, payload);
         if (!this.#eventFilter(event)) return;
-        return await this.#asyncProducer(event);
+        return await this.#asyncProducer(event, eventType.topic)
+            .catch(console.error);
     }
 }
 

@@ -1,8 +1,12 @@
 import {DateTime} from 'luxon';
-import enumValue from "../common/enum.js";
+
+const eventTypeValue = (value, topic) => Object.freeze({
+    toString: () => value,
+    topic: topic,
+});
 
 export const EventType = Object.freeze({
-    UPDATE_GIOS_MEASUREMENT: enumValue("UpdateGiosMeasurement"),
+    UPDATE_GIOS_MEASUREMENT: eventTypeValue("UpdateGiosMeasurement", "update.gios.measurement"),
 
     parse: function (str) {
         const obj = this.values().filter(value => str === value)[0]

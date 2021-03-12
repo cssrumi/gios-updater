@@ -10,8 +10,8 @@ const getOrThrow = (envName) => {
 }
 
 const giosApi = getOrDefault("GIOS_API", "https://powietrze.gios.gov.pl/pjp/archives");
-const kafkaHost = getOrDefault("KAFKA_HOST", "update.gios.measurement");
-const kafkaTopic = getOrDefault("KAFKA_TOPIC", "localhost:9092");
+const kafkaHost = getOrDefault("KAFKA_HOST", "localhost:9092");
+const kafkaTopic = getOrDefault("KAFKA_TOPIC", "update.gios.measurement");
 const pgUser = getOrDefault("PG_USER", "airqreadonly");
 const pgPassword = getOrThrow("PG_PASSWORD");
 const pgHost = getOrDefault("PG_HOST", "10.1.1.50")
@@ -19,6 +19,7 @@ const pgPort = getOrDefault("PG_PORT", "5432")
 const database = getOrDefault("DATABASE", "warehouse")
 const processWindow = getOrDefault("PROCESS_WINDOW", "74")
 const cron = getOrDefault("CRON", "0 0 * * * *")
+const minRelativeError = getOrDefault("MIN_RELATIVE_ERROR", "10")
 const zone = 'Europe/Warsaw'
 
 const Config = {
@@ -32,6 +33,7 @@ const Config = {
     DATABASE: database,
     PROCESS_WINDOW: processWindow,
     CRON: cron,
+    MIN_RELATIVE_ERROR: minRelativeError,
     ZONE: zone,
 }
 
