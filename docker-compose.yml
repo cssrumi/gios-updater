@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+  gios-updater:
+    image: airq/gios-updater:latest
+    environment:
+      PG_PASSWORD: beUCGsVANRGAL67tX68XX2B5
+      PROCESS_WINDOW: 340
+      CRON: "*/10 * * * * *"
+      MIN_RELATIVE_ERROR: 0
+      KAFKA_HOST: "kafka1:9092"

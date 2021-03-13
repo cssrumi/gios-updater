@@ -21,7 +21,7 @@ const getMeasurement = async (stationName) => {
     return await pool.query(enrichedDataQuery, [stationName])
         .then(res => res.rows[0])
         .then(mapRow)
-        .catch(err => console.log(`Error occurred during enriched_data query: ${err.message}`));
+        .catch(err => console.error(`Error occurred during enriched_data query: ${err.message}`));
 }
 
 export default getMeasurement;
