@@ -1,4 +1,5 @@
 import {DateTime} from 'luxon';
+import {timestamp} from "../common/timestamp.js";
 
 const eventTypeValue = (value, topic) => Object.freeze({
     toString: () => value,
@@ -22,7 +23,7 @@ export const EventType = Object.freeze({
 export class AirqEvent {
     constructor(eventType, payload) {
         if (!EventType.values().includes(eventType)) throw new Error(`Invalid EventType: ${eventType}`);
-        this.timestamp = DateTime.now().ts;
+        this.timestamp = timestamp(DateTime.now());
         this.payload = payload;
         this.eventType = eventType.toString();
     }

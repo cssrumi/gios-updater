@@ -9,18 +9,30 @@ const kafka = new Kafka({
 const producer = kafka.producer();
 await producer.connect();
 
-const createMessage = (event) => {
-    return {value: JSON.stringify(event)}
+const parseMessage = (message) => {
+    if (!message.key) return {value: JSON.stringify(message.event)};
+    return {key: message.key, value: JSON.stringify(message.event)}
 };
 
-const produce = async (event, topic) => {
+export class Message {
+    constructor(key, event, topic) {
+        this.key = key;
+        this.event = event;
+        this.topic = topic;
+    }
+
+    static keyless(event, topic) {
+        return new Message(undefined, event, topic);
+    }
+}
+
+export const produce = async (message) => {
+    if (!message instanceof Message) throw new Error(`Invalid message type.`)
     await producer.send({
-        topic: topic,
-        messages: [createMessage(event)]
+        topic: message.topic,
+        messages: [parseMessage(message)]
     });
-    console.log(`Event send: ${JSON.stringify(event)}, on topic: ${topic}`);
+    console.log(`Event send: ${JSON.stringify(message.event)}, on topic: ${message.topic}`);
 }
 
 process.on('SIGTERM', async () => producer.disconnect().then(() => console.log('Kafka producer disconnected.')));
-
-export default produce;
