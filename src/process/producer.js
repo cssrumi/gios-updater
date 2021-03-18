@@ -1,13 +1,4 @@
-import Config from "../config/config.js";
-import {Kafka} from "kafkajs";
-
-const kafka = new Kafka({
-    clientId: 'gios-updater-app',
-    brokers: [Config.KAFKA_HOST]
-});
-
-const producer = kafka.producer();
-await producer.connect();
+import producer from "../config/kafka.js";
 
 const parseMessage = (message) => {
     if (!message.key) return {value: JSON.stringify(message.event)};
@@ -34,5 +25,3 @@ export const produce = async (message) => {
     });
     console.log(`Event send: ${JSON.stringify(message.event)}, on topic: ${message.topic}`);
 }
-
-process.on('SIGTERM', async () => producer.disconnect().then(() => console.log('Kafka producer disconnected.')));
