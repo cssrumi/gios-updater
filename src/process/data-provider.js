@@ -16,8 +16,8 @@ const archiveEnrichedData =
     `select * from enriched_data 
     where timestamp <= now()- interval '${to}' 
     order by timestamp
-limit '${Config.LIMIT_POSTGRES}'
- offset $1`;
+limit $1
+ offset $2`;
 
 const parseTimestamp = (timestamp) => DateTime.fromJSDate(timestamp);
 const mapRow = (row) => {
@@ -25,10 +25,10 @@ const mapRow = (row) => {
 }
 
 const mapRows = (rows) => {
-    let measurements=[];
+    let measurements = [];
 
-    for(const row of rows){
-        (row)?measurements.push(new Measurement(row.station, row.pm10, row.pm25, parseTimestamp(row.timestamp))):null;
+    for (const row of rows) {
+        (row) ? measurements.push(new Measurement(row.station, row.pm10, row.pm25, parseTimestamp(row.timestamp))) : null;
     }
     return measurements;
 }
@@ -42,7 +42,7 @@ export const getMeasurement = async (stationName) => {
 
 export const getArchiveData = async (offset) => {
     try {
-        const res= await pool.query(archiveEnrichedData,[offset])
+        const res = await pool.query(archiveEnrichedData, [Config.LIMIT_POSTGRES, offset])
         return mapRows(res.rows)
     }
     catch(err){
