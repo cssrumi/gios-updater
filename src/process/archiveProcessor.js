@@ -23,7 +23,7 @@ class ArchiveProcessor {
     async process(offset) {
         for(offset;;offset+10){
             this.#archiveStationList = await getArchiveData(offset);
-            if(this.#archiveStationList.length!=10)return
+            if(this.#archiveStationList.length!=10)break;
             await Promise.all(this.#archiveStationList.map(this.#bindedProcessStation));
         }
     }
