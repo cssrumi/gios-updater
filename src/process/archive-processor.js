@@ -1,4 +1,4 @@
-import {getArchiveData} from "./data-provider.js";
+import {getArchiveMeasurements} from "./data-provider.js";
 import {QueryParam, sensorQueryFactory} from "../query/query.js";
 import Source from "../query/source.js";
 import Sensor from "../common/sensor.js";
@@ -6,9 +6,9 @@ import {AirqEvent, EventType} from "./airq-event.js";
 import createKey from "./key.js";
 import {Message} from "./producer.js";
 import {timestamp} from "../common/timestamp.js";
+import Config from "../config/config.js";
 
 class ArchiveProcessor {
-    #archiveStationList;
     #asyncProducer;
     #eventFilter;
     #bindedProcessStation;
@@ -20,11 +20,11 @@ class ArchiveProcessor {
         this.#bindedProcessStation = this.#processStation.bind(this);
     }
 
-    async process(offset) {
-        for (offset; ; offset = offset + 10) {
-            this.#archiveStationList = await getArchiveData(offset);
-            if (this.#archiveStationList.length != 10) break;
-            await Promise.all(this.#archiveStationList.map(this.#bindedProcessStation));
+    async process() {
+        for (let offset = 0; ; offset += Config.ARCHIVE_BATCH_SIZE) {
+            const archivedMeasurements = await getArchiveMeasurements(offset);
+            await Promise.all(archivedMeasurements.map(this.#bindedProcessStation));
+            if (archivedMeasurements.length != Config.ARCHIVE_BATCH_SIZE) break;
         }
     }
 

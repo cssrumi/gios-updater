@@ -10,11 +10,12 @@ const main = async () => {
     const stationList = await findAllStations();
     console.log(`Processing data for: [${stationList}]`)
     // const asyncProducer = async (event) => console.log(JSON.stringify(event));
-    const archiveProcessor = new ArchiveProcessor(produce, eventFilter);
+    if (Config.ARCHIVE_PROCESSOR_ENABLED) {
+        const archiveProcessor = new ArchiveProcessor(produce, eventFilter)
+        await archiveProcessor.process();
+    }
     const processor = new Processor(stationList, produce, eventFilter);
-
-    await archiveProcessor.process(Config.OFFSET_POSTGRES);
     await cron.schedule(Config.CRON, processor.process, undefined);
-};
+}
 
 (async () => await main())();

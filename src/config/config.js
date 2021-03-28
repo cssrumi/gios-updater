@@ -19,8 +19,9 @@ const pgPort = getOrDefault("PG_PORT", "5432")
 const database = getOrDefault("DATABASE", "warehouse")
 const processWindow = getOrDefault("PROCESS_WINDOW", "74")
 const cron = getOrDefault("CRON", "0 0 * * * *")
-const limit=getOrDefault("LIMIT_POSTGRES","ALL")
-const offset=getOrDefault("OFFSET_POSTGRES","0")
+const limit = getOrDefault("LIMIT_POSTGRES", "ALL")
+const archiveProcessorEnabled = getOrDefault("ARCHIVE_PROCESSOR_ENABLED", true)
+const archiveBatchSize = getOrDefault("ARCHIVE_BATCH_SIZE", 10)
 const minRelativeError = getOrDefault("MIN_RELATIVE_ERROR", "10")
 const zone = 'Europe/Warsaw'
 
@@ -35,8 +36,9 @@ const Config = {
     DATABASE: database,
     PROCESS_WINDOW: processWindow,
     CRON: cron,
-    LIMIT_POSTGRES:limit,
-    OFFSET_POSTGRES:offset,
+    LIMIT_POSTGRES: limit,
+    ARCHIVE_PROCESSOR_ENABLED: archiveProcessorEnabled,
+    ARCHIVE_BATCH_SIZE: archiveBatchSize,
     MIN_RELATIVE_ERROR: minRelativeError,
     ZONE: zone,
 }
