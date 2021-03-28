@@ -12,16 +12,42 @@ const enrichedDataQuery = `
     and timestamp >= now() - interval  '${to}'
 `;
 
+const archiveEnrichedData =
+    `select * from enriched_data 
+    where timestamp <= now()- interval '${to}' 
+    order by timestamp
+limit '${Config.LIMIT_POSTGRES}'
+ offset $1`;
+
 const parseTimestamp = (timestamp) => DateTime.fromJSDate(timestamp);
 const mapRow = (row) => {
     return (row) ? new Measurement(row.station, row.pm10, row.pm25, parseTimestamp(row.timestamp)) : null;
 }
 
-const getMeasurement = async (stationName) => {
+const mapRows = (rows) => {
+    let measurements=[];
+
+    for(const row of rows){
+        (row)?measurements.push(new Measurement(row.station, row.pm10, row.pm25, parseTimestamp(row.timestamp))):null;
+    }
+    return measurements;
+}
+
+export const getMeasurement = async (stationName) => {
     return await pool.query(enrichedDataQuery, [stationName])
         .then(res => res.rows[0])
         .then(mapRow)
         .catch(err => console.error(`Error occurred during enriched_data query: ${err.message}`));
 }
 
-export default getMeasurement;
+export const getArchiveData = async (offset) => {
+    try {
+        const res= await pool.query(archiveEnrichedData,[offset])
+        return mapRows(res.rows)
+    }
+    catch(err){
+        console.log(`Error occurred during enriched_data query: ${err.message}`)
+    }
+}
+
+

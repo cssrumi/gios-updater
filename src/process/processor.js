@@ -1,4 +1,4 @@
-import getMeasurement from "./data-provider.js";
+import {getMeasurement} from "./data-provider.js";
 import {QueryParam, sensorQueryFactory} from "../query/query.js";
 import Source from "../query/source.js";
 import Sensor from "../common/sensor.js";
