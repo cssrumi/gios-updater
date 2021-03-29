@@ -17,7 +17,7 @@ class ArchiveProcessor {
         this.#asyncProducer = asyncProducer;
         this.#eventFilter = (eventFilter) ? eventFilter : (_) => true;
         this.process = this.process.bind(this);
-        this.#bindedProcessMeasurement = this.#processStation.bind(this);
+        this.#bindedProcessMeasurement = this.#processMeasurement.bind(this);
     }
 
     async process() {
@@ -28,7 +28,7 @@ class ArchiveProcessor {
         }
     }
 
-    async #processStation(measurement) {
+    async #processMeasurement(measurement) {
         const query = sensorQueryFactory(Source.GIOS_API);
         const queryParam = new QueryParam(measurement.stataionName, Sensor.PM10, measurement.datetime)
         const pm10FromGiosApi = await query(queryParam);

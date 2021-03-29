@@ -27,7 +27,6 @@ const mapRow = (row) => {
     return (row) ? new Measurement(row.station, row.pm10, row.pm25, parseTimestamp(row.timestamp)) : null;
 }
 
-
 export const getMeasurement = async (stationName) => {
     return await pool.query(enrichedDataQuery, [stationName, from, to])
         .then(res => res.rows[0])
@@ -40,5 +39,3 @@ export const getArchiveMeasurements = async (offset) => {
         .then(res => res.rows.map(mapRow).filter(measurement => measurement !== null))
         .catch(err => console.error(`Error occurred during enriched_data query: ${err.message}`));
 }
-
-
