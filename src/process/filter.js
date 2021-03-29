@@ -1,6 +1,12 @@
 import {EventType} from "./airq-event.js";
 import Config from "../config/config.js";
+import {DateTime} from 'luxon';
 
+
+const formatTimestamp = (timestamp) => {
+    const dt = DateTime.fromSeconds(timestamp)
+    return dt.toFormat('yyyy-MM-dd hh:mm')
+}
 
 const updateGiosMeasurementFilter = (event) => {
     const payload = event.payload;
@@ -10,7 +16,8 @@ const updateGiosMeasurementFilter = (event) => {
     if (payload.newPm10 === payload.oldPm10) return false;
     const relErr = (Math.abs(payload.oldPm10 - payload.newPm10) / payload.oldPm10) * 100;
     if (relErr > Config.MIN_RELATIVE_ERROR) return true;
-    console.debug(`Relative error was to small ${relErr}`)
+    const formattedTimestamp = formatTimestamp(payload.timestamp);
+    console.debug(`Relative error for ${formattedTimestamp} - '${payload.station}' was to small ${relErr.toFixed(2)}`)
     return false;
 }
 

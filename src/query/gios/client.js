@@ -92,7 +92,8 @@ const getJsonBody = async (response, auth) => {
     const body = await response.text();
     try {
         const decodeData = aesUtil.decrypt(salt, iv, auth.csrfToken, body);
-        return (decodeData) ? JSON.parse(decodeData) : {Data: []};
+        const jsonBody = (decodeData) ? JSON.parse(decodeData) : {Data: []};
+        return (jsonBody.Data) ? jsonBody : {...jsonBody, Data: []};
     } catch (e) {
         console.warn(`Error during deserialization: ${e.message}`);
         return {Data: []};
