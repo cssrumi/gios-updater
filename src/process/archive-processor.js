@@ -11,25 +11,24 @@ import Config from "../config/config.js";
 class ArchiveProcessor {
     #asyncProducer;
     #eventFilter;
-    #bindedProcessStation;
+    #bindedProcessMeasurement;
 
     constructor(asyncProducer, eventFilter = undefined) {
         this.#asyncProducer = asyncProducer;
         this.#eventFilter = (eventFilter) ? eventFilter : (_) => true;
         this.process = this.process.bind(this);
-        this.#bindedProcessStation = this.#processStation.bind(this);
+        this.#bindedProcessMeasurement = this.#processStation.bind(this);
     }
 
     async process() {
         for (let offset = 0; ; offset += Config.ARCHIVE_BATCH_SIZE) {
             const archivedMeasurements = await getArchiveMeasurements(offset);
-            await Promise.all(archivedMeasurements.map(this.#bindedProcessStation));
-            if (archivedMeasurements.length != Config.ARCHIVE_BATCH_SIZE) break;
+            await Promise.all(archivedMeasurements.map(this.#bindedProcessMeasurement));
+            if (archivedMeasurements.length !== Config.ARCHIVE_BATCH_SIZE) break;
         }
     }
 
     async #processStation(measurement) {
-
         const query = sensorQueryFactory(Source.GIOS_API);
         const queryParam = new QueryParam(measurement.stataionName, Sensor.PM10, measurement.datetime)
         const pm10FromGiosApi = await query(queryParam);

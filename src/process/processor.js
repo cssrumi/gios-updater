@@ -22,6 +22,7 @@ class Processor {
     }
 
     async process() {
+        console.log('processor process started')
         await Promise.all(this.#stationList.map(this.#bindedProcessStation));
     }
 

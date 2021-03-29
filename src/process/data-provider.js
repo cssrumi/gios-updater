@@ -18,7 +18,7 @@ const archiveEnrichedData =
     `select *
      from enriched_data
      where timestamp <= now() - ($1 || ' hours'):: INTERVAL
-     order by timestamp
+     order by timestamp, id
          limit $2
      offset $3`;
 
@@ -36,9 +36,8 @@ export const getMeasurement = async (stationName) => {
 }
 
 export const getArchiveMeasurements = async (offset) => {
-    return await pool.query(archiveEnrichedData, [to, Config.LIMIT_POSTGRES, offset])
-        .then(res => res.rows)
-        .then(rows => rows.map(mapRow).filter(measurement => measurement !== null))
+    return await pool.query(archiveEnrichedData, [to, Config.ARCHIVE_BATCH_SIZE, offset])
+        .then(res => res.rows.map(mapRow).filter(measurement => measurement !== null))
         .catch(err => console.error(`Error occurred during enriched_data query: ${err.message}`));
 }
 
