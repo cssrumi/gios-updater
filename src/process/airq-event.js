@@ -1,5 +1,6 @@
 import {DateTime} from 'luxon';
 import {timestamp} from "../common/timestamp.js";
+import Config from "../config/config.js";
 
 const eventTypeValue = (value, topic) => Object.freeze({
     toString: () => value,
@@ -7,7 +8,7 @@ const eventTypeValue = (value, topic) => Object.freeze({
 });
 
 export const EventType = Object.freeze({
-    UPDATE_GIOS_MEASUREMENT: eventTypeValue("UpdateGiosMeasurement", "update.gios.measurement"),
+    UPDATE_GIOS_MEASUREMENT: eventTypeValue("UpdateGiosMeasurement", Config.KAFKA_TOPIC),
 
     parse: function (str) {
         const obj = this.values().filter(value => str === value)[0]

@@ -3,24 +3,24 @@ import Config from "../config/config.js";
 import Measurement from "../common/measurement.js"
 import {DateTime} from "luxon";
 
-const from = `${parseInt(Config.PROCESS_WINDOW) - 1} HOURS`;
-const to = `${Config.PROCESS_WINDOW} HOURS`;
+const from = `${parseInt(Config.PROCESS_WINDOW) - 1}`;
+const to = `${Config.PROCESS_WINDOW}`;
 
 const enrichedDataQuery = `
     select *
     from enriched_data
     where station = $1
-      and timestamp <= now() - ($2 || ' hours'):: INTERVAL
-      and timestamp >= now() - ($3 || ' hours'):: INTERVAL
+    and timestamp <= now() - ($2 || ' hours')::INTERVAL
+    and timestamp >= now() - ($3 || ' hours')::INTERVAL
 `;
 
-const archiveEnrichedData =
-    `select *
-     from enriched_data
-     where timestamp <= now() - ($1 || ' hours'):: INTERVAL
-     order by timestamp, id
-         limit $2
-     offset $3`;
+const archiveEnrichedData = `
+    select *
+    from enriched_data
+    where timestamp <= now() - ($1 || ' hours'):: INTERVAL
+    order by timestamp, id limit $2
+    offset $3
+`;
 
 const parseTimestamp = (timestamp) => DateTime.fromJSDate(timestamp);
 const mapRow = (row) => {
