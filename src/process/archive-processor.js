@@ -1,4 +1,4 @@
-import {getMeasurement} from "./data-provider.js";
+import {getArchiveMeasurements} from "./data-provider.js";
 import {QueryParam, sensorQueryFactory} from "../query/query.js";
 import Source from "../query/source.js";
 import Sensor from "../common/sensor.js";
@@ -6,30 +6,31 @@ import {AirqEvent, EventType} from "./airq-event.js";
 import createKey from "./key.js";
 import {Message} from "./producer.js";
 import {timestamp} from "../common/timestamp.js";
+import Config from "../config/config.js";
 
-class Processor {
-    #stationList;
+class ArchiveProcessor {
     #asyncProducer;
     #eventFilter;
-    #bindedProcessStation;
+    #bindedProcessMeasurement;
 
-    constructor(stationList, asyncProducer, eventFilter = undefined) {
-        this.#stationList = stationList;
+    constructor(asyncProducer, eventFilter = undefined) {
         this.#asyncProducer = asyncProducer;
         this.#eventFilter = (eventFilter) ? eventFilter : (_) => true;
         this.process = this.process.bind(this);
-        this.#bindedProcessStation = this.#processStation.bind(this);
+        this.#bindedProcessMeasurement = this.#processMeasurement.bind(this);
     }
 
     async process() {
-        console.log('processor process started')
-        await Promise.all(this.#stationList.map(this.#bindedProcessStation));
+        for (let offset = 0; ; offset += Config.ARCHIVE_BATCH_SIZE) {
+            const archivedMeasurements = await getArchiveMeasurements(offset);
+            await Promise.all(archivedMeasurements.map(this.#bindedProcessMeasurement));
+            if (archivedMeasurements.length !== Config.ARCHIVE_BATCH_SIZE) break;
+        }
     }
 
-    async #processStation(stationName) {
-        const measurement = await getMeasurement(stationName);
+    async #processMeasurement(measurement) {
         const query = sensorQueryFactory(Source.GIOS_API);
-        const queryParam = new QueryParam(stationName, Sensor.PM10, measurement.datetime)
+        const queryParam = new QueryParam(measurement.stataionName, Sensor.PM10, measurement.datetime)
         const pm10FromGiosApi = await query(queryParam);
         const payload = {
             timestamp: timestamp(measurement.datetime),
@@ -49,4 +50,4 @@ class Processor {
     }
 }
 
-export default Processor;
+export default ArchiveProcessor;
